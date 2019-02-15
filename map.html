@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <title>台湾旅行-台北</title>
+  <style type="text/css">
+    html,
+    body {
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+
+    .box {
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+    }
+
+    #allmap {
+      float: left;
+      flex-grow:2;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      margin: 0;
+      font-family: "微软雅黑";
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div id="app" style="float: left;">
+      <button style="float:right;width:12px;padding: 0;" @click="changeStatus" >{{ buttonTip }}</button>
+      <ul ref="list">
+        <li v-for="(item, index) in jsonData" ><a href="javascript:void(0)" @click="to(item[0],item[1],index)">{{ item[2] }}</a></li>
+      </ul>
+    </div>
+    <div id="allmap"></div>
+  </div>
+
+  <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=SyRux96r0i0Xue1Qqp0ZPb4uCc8BC6Aw"></script>
+  <script type="text/javascript">
+    var json_data = [
+      [121.53365,25.055596,  '大倉久和大飯店','大倉久和大飯店<br />台湾台北市中山区南京东路一段9号', 0],
+      [121.525835,25.058521 , '宁夏夜市','宁夏夜市', 0],
+      [121.587854,25.054098 , '饶河夜市','饶河夜市', 0],
+      [121.538438,25.036113 , '永康牛肉面','台湾台北市大安区金山南路二段31巷17号(金山南路二段與信義路二段148巷交叉口旁)：东门站，距离鼎泰丰很近。', 0],
+      [121.535858,25.041997 , '老张牛肉面','台湾台北市中正区杭州南路一段93号', 0],
+      [121.551886,25.049805 , '林东芳牛肉面','10491台湾台北市中山區安東街4-3號'],
+      [121.52085,25.044584 , '桃园街牛肉面','桃源街正宗山东牛肉面 100台湾台北市中正区桃源街16号：西门站，台北博物馆背后', 0],
+      [121.540438,25.03676 , '鼎泰丰','106台湾台北市大安区信誉路二段194号 东门站', 0],
+      [121.554623,25.045378 , '阿宗面线','106台湾台北市大安区忠孝东路四段17巷2号', 0],
+      [121.518072,25.046229 , '阿宗面线','台湾台北市万华区峨眉街8-1号 西门站', 0],
+      [121.528937,25.035098 , '金峰卤肉饭','台湾台北市中正区罗斯福路一段10号 中正纪念堂站', 0],
+      [121.547297,25.070025 , '上引水产','10491台北市中山区民族东路410巷2弄18号 行天宫上面', 0],
+      [121.567387,25.061261 , '微热山丘','105台湾台北市松山区民生东路五段36巷4弄1号 去饶河夜市路上或者回来的时候考虑去下', 0],
+      [121.533991,25.054257 , '肥前屋','台北市中山区中山北路一段121巷13-2号(近捷运中山站2号出口)', 0],
+      [121.571705,25.054707 , '佳德糕饼','佳德凤梨酥 台湾台北市松山区南京东路五段88号', 0],
+      [121.5392,25.035204 , '思慕昔','台湾台北市大安区丽水街16号', 0],
+      [121.5652,25.045206 , 'ice monster','106台湾台北市大安区忠孝东路四段297号', 0],
+      [121.577468,25.041629 , 'ICE MONSTER(微风松高店)','110台湾台北市信义区松高路16号1楼号', 0],
+      [121.546399,25.051777 , '鼎王麻辣锅','104台湾台北市中山区长安东路二段131-1号 還有一家在微熱山丘下面', 0],
+      [121.568211,25.054101 , '鼎王麻辣锅(光复店)','台湾台北市松山区光复北路89号', 0],
+      [121.542819,25.018941 , '陈三鼎黑糖粉圆鲜奶专卖店','台湾台北市中正区罗斯福路三段316巷8弄2号', 0],
+      [121.579019,25.035524 , '吴宝春(麦方)店台北信义旗舰店','台湾台北市信义区信义路五段124号', 0],
+      [121.544458,25.051818 , '犁记饼店','台北犁记 台湾台北市中山区长安东路二段67号', 0],
+      [121.52567,25.049289 , '犁记饼店','台湾台北市中正区忠孝西路一段66号', 0],
+      [121.535229,25.04717 , '阜杭豆浆','台湾台北市中正区忠孝东路一段108号2F(近捷运善导寺站5号出口)', 0],
+      [121.567894,25.033437 , 'letao','110台湾台北市信义区基隆路二段94号', 0],
+      [121.532603,25.056679 , 'letao2','LeTAO小樽洋果子铺(中山店) 10491台湾台北市中山区中山北路二段20巷1号', 0],
+      [121.563916,25.045435 , '阿水狮猪脚大王','台北市大安区忠孝东路四段235之1号', 0],
+      [121.55681,25.158762 , '阳明山公园','', 1],
+      [121.447091,25.178457 , '淡水中学','淡水国中 251台湾新北市淡水区真理街10号', 1],
+      [121.586537,24.999261 , '猫空缆车','新光路二段文山区台北市台湾 116', 1],
+      [121.585675,25.029606 , '象山','110台湾台北市信义区信义路五段150巷401弄31号', 1],
+    ];
+    var app = new Vue({
+      el: '#app',
+      data: {
+        buttonTip: '<',
+        jsonData: json_data
+      },
+      methods: {
+        changeStatus() {
+          
+          if (this.buttonTip === '<') {
+            this.buttonTip = '>';
+            this.$refs.list.style.display = 'none';
+          } else {
+            this.buttonTip = '<';
+            this.$refs.list.style.display = 'block';
+          }
+        }
+      }
+    })
+    // 百度地图API功能
+    var map = new BMap.Map("allmap");
+    var point = new BMap.Point(121.53365, 25.055596);
+    map.centerAndZoom(point, 15);
+    map.enableScrollWheelZoom(true);
+    var pointArray = new Array();
+    var markers = new Array();
+    var opts = {
+      width: 250,     // 信息窗口宽度
+      height: 80,     // 信息窗口高度
+      title: "", // 信息窗口标题
+      enableMessage: true//设置允许信息窗发送短息
+    };
+
+    for (var i = 0; i < json_data.length; i++) {
+      var marker = new BMap.Marker(new BMap.Point(json_data[i][0], json_data[i][1])); // 创建点
+      var label = new BMap.Label(json_data[i][2]);
+      if (json_data[i][4] === 1) {
+        label.setStyle({ color : "red", fontSize : "12px" });
+      } else {
+        label.setStyle({ borderColor : "blue", fontSize : "12px" });
+      }
+      label.setOffset(new BMap.Size((json_data[i][2].length / 2)*-10,-15));
+      marker.setLabel(label);
+      map.addOverlay(marker);    //增加点
+      markers.push(marker);
+      pointArray[i] = new BMap.Point(json_data[i][0], json_data[i][1]);
+      var content = json_data[i][2] + '</br>'+ json_data[i][3];
+      addClickHandler(content, marker);
+
+    }
+    //让所有点在视野范围内
+    map.setViewport(pointArray);
+
+    function addClickHandler(content, marker) {
+      marker.addEventListener("click", function (e) {
+        openInfo(content, e)
+      }
+      );
+    }
+    function openInfo(content, e) {
+      var p = e.target;
+      var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+      var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象 
+      map.openInfoWindow(infoWindow, point); //开启信息窗口
+    }
+
+    //移动到某一坐标点
+    function to(x, y, i) {
+      map.panTo(new BMap.Point(x, y));
+      var content = json_data[i][2] + '</br>'+ json_data[i][3];
+      var infoWindow = new BMap.InfoWindow(content, opts);
+      map.openInfoWindow(infoWindow, markers[i].point);
+    }
+  </script>
+</body>
+
+</html>
